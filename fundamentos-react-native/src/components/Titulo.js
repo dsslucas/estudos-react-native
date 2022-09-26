@@ -1,0 +1,14 @@
+import React from 'react'
+import { Text } from 'react-native'
+
+// Estilo
+import Style from './estilo'
+
+export default (props) => {
+    return (
+        <>
+            <Text style={Style.title}>{props.principal}</Text>
+            <Text>{props.secundario}</Text>
+        </>
+    )
+}
