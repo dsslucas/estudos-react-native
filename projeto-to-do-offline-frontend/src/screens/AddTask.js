@@ -33,7 +33,7 @@ export default class AddTask extends Component {
                 </TouchableWithoutFeedback>
 
                 <SafeAreaView style={styles.container}>
-                    <Text style={styles.header}>Nova tarefa...</Text>
+                    <Text style={styles.header}>Nova tarefa:</Text>
                     <TextInput
                         style={styles.input}
                         placeholder="Informe a descrição..."
