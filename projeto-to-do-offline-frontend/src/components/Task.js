@@ -1,6 +1,11 @@
 import React from 'react'
-import { SafeAreaView, StyleSheet, Text, TouchableWithoutFeedback } from 'react-native'
+import { SafeAreaView, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
+
+//import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
+
+//import { Swipeable, GestureHandlerRootView } from 'react-native-gesture-handler'
 
 // Arruma as datas
 import moment from 'moment'
@@ -38,22 +43,51 @@ export default props => {
     // MELHORIA!!! Data que o To-do foi concluído. 
     const doneDate = moment(props.done).locale('pt-br').format('D [de] MMMM [de] YYYY')
 
-    return (
-        <SafeAreaView style={styles.container}>
-            <TouchableWithoutFeedback onPress={() => props.toggleTask(props.id)}>
-                <SafeAreaView style={styles.checkContainer}>
-                    {getCheckView(props.doneAt)}
-                </SafeAreaView>
-            </TouchableWithoutFeedback>
+    // //Botão de excluir e call para exclusão da task. Desativado pois o Swipeable não funciona para o Expo.
+    // const getRightContent = () => {
+    //     return (
+    //         <TouchableOpacity 
+    //             style={styles.right} 
+    //             onPress={() => props.onDelete && props.onDelete(props.id)}
+    //         >
+    //             <Icon name="trash" size={30} color="#fff" />
+    //         </TouchableOpacity>
+    //     )
+    // }
 
-            <SafeAreaView>
-                <Text style={[styles.desc, doneOrNotStyle]}>{props.desc}</Text>
-                <Text style={[styles.date, doneOrNotStyle]}>Criado em {assignedDate}</Text>
-                {props.doneAt != null ? (
-                    <Text style={[styles.date, doneOrNotStyle]}>Concluído em {doneDate}</Text>
-                ) : null}
+    return (
+        // <GestureHandlerRootView>
+        // <Swipeable
+        //     renderRightActions={getRightContent}
+        //     onSwipeableRightOpen={() => props.onDelete && props.onDelete(props.id)}
+        // >
+            <SafeAreaView style={styles.container}>
+                <TouchableWithoutFeedback onPress={() => props.toggleTask(props.id)}>
+                    <SafeAreaView style={styles.checkContainer}>
+                        {getCheckView(props.doneAt)}
+                    </SafeAreaView>
+                </TouchableWithoutFeedback>
+
+                <SafeAreaView style={{ width: "60%" }}>
+                    <Text style={[styles.desc, doneOrNotStyle]}>{props.desc}</Text>
+                    <Text style={[styles.date, doneOrNotStyle]}>Criado em {assignedDate}</Text>
+                    {props.doneAt != null ? (
+                        <Text style={[styles.date, doneOrNotStyle]}>Concluído em {doneDate}</Text>
+                    ) : null}
+                </SafeAreaView>
+
+                <SafeAreaView style={styles.checkContainer}>
+                    <TouchableOpacity 
+                        style={styles.right}
+                        onPress={() => props.onDelete && props.onDelete(props.id)}
+                    >
+                        <Icon name="trash" size={30} color="#fff" />
+                    </TouchableOpacity>
+                </SafeAreaView>
+
             </SafeAreaView>
-        </SafeAreaView>
+        // </Swipeable>
+        // </GestureHandlerRootView>
     )
 }
 
@@ -104,5 +138,13 @@ const styles = StyleSheet.create({
         fontFamily: commonStyles.fontFamily,
         color: commonStyles.colors.subText,
         fontSize: 12
+    },
+
+    // Swipe lado direito
+    right: {
+        backgroundColor: 'red',
+        alignItems: 'center',
+        paddingVertical: 5,
+        width: '50%'
     }
 })

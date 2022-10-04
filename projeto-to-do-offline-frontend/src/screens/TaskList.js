@@ -1,6 +1,9 @@
 // Lista das tarefas
 import React, { Component } from 'react'
-import { SafeAreaView, Text, ImageBackground, StyleSheet, FlatList, TouchableOpacity, Platform } from 'react-native'
+import { SafeAreaView, Text, ImageBackground, StyleSheet, FlatList, TouchableOpacity, Platform, Alert } from 'react-native'
+
+// Async Storage
+//import asyncStorage from '@react-native-community/async-storage'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
 // Estilos padrão
@@ -17,6 +20,7 @@ import 'moment/locale/pt-br'
 // Componentes
 import Task from '../components/Task'
 import AddTask from './AddTask'
+// import AsyncStorage from '@react-native-community/async-storage'
 
 export default class TaskList extends Component {
     state = {
@@ -27,7 +31,7 @@ export default class TaskList extends Component {
         visibleTasks: [],
 
         // Permite a abertura do modal para cadastro
-        showAddTask: true,
+        showAddTask: false,
 
         // Lista de tarefas
         tasks: [{
@@ -47,32 +51,32 @@ export default class TaskList extends Component {
             doneAt: new Date()
         }, {
             id: Math.random(),
-            desc: 'Ouvir Leandro e Leonardo',
-            estimateAt: new Date('2016-03-08'),
+            desc: 'Treinar o solo de "Doce Mistério" de Leandro & Leonardo',
+            estimateAt: new Date('2018-03-08'),
             doneAt: null
         }, {
             id: Math.random(),
-            desc: 'Dirigir meu Scania',
+            desc: 'Revisar conteúdos de React Native',
             estimateAt: new Date('2018-08-07'),
             doneAt: null
         }, {
             id: Math.random(),
-            desc: 'Falar meleca no zap',
+            desc: 'Lavar a casa',
             estimateAt: new Date('2015-05-25'),
             doneAt: new Date()
         }, {
             id: Math.random(),
-            desc: 'Comer virado para a parede',
+            desc: 'Fazer almoço',
             estimateAt: new Date('2022-01-01'),
             doneAt: new Date()
         }, {
             id: Math.random(),
-            desc: 'Assistir a filmografia do Jason Statham',
+            desc: 'Consulta médica',
             estimateAt: new Date('2020-10-15'),
             doneAt: null
         }, {
             id: Math.random(),
-            desc: 'Meter o shape',
+            desc: 'Pagar a viagem para Salvador',
             estimateAt: new Date('2022-01-25'),
             doneAt: new Date()
         }, {
@@ -89,8 +93,16 @@ export default class TaskList extends Component {
     }
 
     // Funciona semrpe quando um componente for montado/alterado
+    // Restaura o estado da aplicação baseado aonde foi passado no filterTask
     componentDidMount = () => {
         this.filterTasks()
+        // // Pega no Async Storage
+        // const stateString = await AsyncStorage.getItem('tasksState')
+
+        // // Verifica o estado
+        // const state = JSON.parse(stateString) || this.state
+
+        // this.setState(state)
     }
 
     // Filtra as tarefas concluídas ou não
@@ -114,6 +126,9 @@ export default class TaskList extends Component {
         }
 
         this.setState({ visibleTasks })
+
+        // Async Storage, transforma um estado em string.
+        // AsyncStorage.setItem('tasksState', JSON.stringify(this.state))
     }
 
     // Pega o ID da Task e modifica (aberta/fechada)
@@ -131,6 +146,37 @@ export default class TaskList extends Component {
         this.setState({ tasks }, this.filterTasks)
     }
 
+    // Adiciona a tarefa salva pelo modal na Task
+    addTask = (newTask) => {
+        if (!newTask.desc || !newTask.desc.trim()) {
+            Alert.alert("Dados Inválidos", "Descrição não informada!")
+            return
+        }
+
+        // Clona o estado
+        const tasks = [...this.state.tasks]
+
+        // Adiciona no array
+        tasks.push({
+            id: Math.random(),
+            desc: newTask.desc,
+            estimateAt: newTask.date,
+            doneAt: null
+        })
+
+        // Altera o estado e chama por callback
+        this.setState({ tasks, showAddTask: false }, this.filterTasks)
+    }
+
+    // Exclui uma task
+    deleteTask = id => {
+        // Faz a exclusão usando o Filter
+        const tasks = this.state.tasks.filter(task => task.id !== id)
+
+        // Altera o estado e realiza callback
+        this.setState({ tasks }, this.filterTasks)
+    }
+
     render() {
         // O que vem do Moment para a data
         const today = moment().locale('pt-br').format('dddd, D [de] MMMM [de] YYYY')
@@ -139,7 +185,9 @@ export default class TaskList extends Component {
                 <AddTask
                     isVisible={this.state.showAddTask}
                     onCancel={() => this.setState({ showAddTask: false })}
+                    onSave={this.addTask}
                 />
+
                 <ImageBackground source={todayImage} style={styles.background}>
                     <SafeAreaView style={styles.iconBar}>
                         <TouchableOpacity onPress={this.toggleFilter}>
@@ -149,18 +197,28 @@ export default class TaskList extends Component {
                             />
                         </TouchableOpacity>
                     </SafeAreaView>
+
                     <SafeAreaView style={styles.titleBar}>
                         <Text style={styles.title}>Hoje</Text>
                         <Text style={styles.subtitle}>{today}</Text>
                     </SafeAreaView>
                 </ImageBackground>
+
                 <SafeAreaView style={styles.taskList}>
                     <FlatList
                         data={this.state.visibleTasks}
                         keyExtractor={item => `${item.id}`}
-                        renderItem={({ item }) => <Task {...item} toggleTask={this.toggleTask} />}
+                        renderItem={({ item }) => <Task {...item} toggleTask={this.toggleTask} onDelete={this.deleteTask} />}
                     />
                 </SafeAreaView>
+
+                <TouchableOpacity
+                    style={styles.addButton}
+                    onPress={() => this.setState({ showAddTask: true })}
+                    activeOpacity={0.7}
+                >
+                    <Icon name="plus" size={20} color={commonStyles.colors.secondary} />
+                </TouchableOpacity>
             </SafeAreaView>
         )
     }
@@ -204,5 +262,18 @@ const styles = StyleSheet.create({
         marginHorizontal: 20,
         justifyContent: 'flex-end',
         marginTop: 40
+    },
+
+    // Botão de adicionar
+    addButton: {
+        position: 'absolute',
+        right: 30,
+        bottom: 30,
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        backgroundColor: commonStyles.colors.today,
+        alignItems: 'center',
+        justifyContent: 'center'
     }
 })

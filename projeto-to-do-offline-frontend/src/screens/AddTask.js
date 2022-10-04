@@ -1,5 +1,11 @@
 import React, { Component } from "react";
-import { Button, Modal, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+import { Button, Modal, Platform, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+
+// Pega o horário nos telefones
+import DateTimePicker from '@react-native-community/datetimepicker'
+
+// Horário
+import moment from 'moment'
 
 // Estilos padrão
 import commonStyles from "../commonStyles";
@@ -13,8 +19,50 @@ export default class AddTask extends Component {
     getInitialState = () => {
         return {
             desc: '',
-            date: new Date()
+            date: new Date(),
+            showDatePicker: false
         }
+    }
+
+    // Salva a tarefa
+    save = () => {
+        const newTask = {
+            desc: this.state.desc,
+            date: this.state.date
+        }
+
+        // Caso esteja setado
+        this.props.onSave && this.props.onSave(newTask)
+
+        // Restaura o estado inicial do componente
+        this.setState({ ...this.state })
+    }
+
+    // Roda o Date Time Picker conforme o sistema operacional
+    getDatePicker = () => {
+        let datePicker = <DateTimePicker
+            value={this.state.date}
+            onChange={(event, date) => this.setState({ date: date, showDatePicker: false })}
+            mode="date"
+        />
+
+        // String de data
+        const dateString = moment(this.state.date).format('dddd, D [de] MMMM [de] YYYY')
+
+        if (Platform.OS === 'android') {
+            // No Android, temos que colocar em outra estrutura
+            datePicker = (
+                <SafeAreaView>
+                    <TouchableOpacity onPress={() => this.setState({ showDatePicker: true })}>
+                        <Text style={styles.date}>{dateString}</Text>
+                    </TouchableOpacity>
+
+                    {this.state.showDatePicker && datePicker}
+                </SafeAreaView>
+            )
+        }
+
+        return datePicker
     }
 
     render() {
@@ -40,12 +88,12 @@ export default class AddTask extends Component {
                         value={this.state.desc}
                         onChangeText={(e) => this.setState({ desc: e })}
                     />
-
+                    {this.getDatePicker()}
                     <SafeAreaView style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
                         <TouchableOpacity onPress={this.props.onCancel}>
                             <Text style={styles.button}>Cancelar</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity >
+                        <TouchableOpacity onPress={this.save}>
                             <Text style={styles.button}>Salvar</Text>
                         </TouchableOpacity>
                     </SafeAreaView>
@@ -95,5 +143,12 @@ const styles = StyleSheet.create({
     buttons: {
         flexDirection: 'row',
         justifyContent: 'flex=end'
+    },
+
+    // Texto para o Modal, no Android
+    date: {
+        fontFamily: commonStyles.fontFamily,
+        fontSize: 15,
+        marginLeft: 15
     }
 })
