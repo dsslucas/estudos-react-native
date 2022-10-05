@@ -34,6 +34,6 @@ module.exports = app => {
     return {
         initialize: () => passport.initialize(),
         // Estatégia de autenticação por JWT e seção falsa
-        authenticate: () => passport.authenticate('jwt', {session: false})
+        authenticate: () => passport.authenticate('jwt', { session: false })
     }
 }

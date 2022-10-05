@@ -12,7 +12,7 @@ module.exports = app => {
     // Salva o usuário no BD
     const save = (req, res) => {
         obterHash(req.body.password, hash => {
-            // Hash calculado na requisição. Aqui vemtudo criptografado
+            // Hash calculado na requisição. Aqui vem tudo criptografado
             const password = hash
 
             // Conecta com o Knex
