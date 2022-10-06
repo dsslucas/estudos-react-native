@@ -1,3 +1,17 @@
+# Projeto To-Do App - Backend
+
+Projeto para cadastro de usuários e tasks utilizando serviços backend.
+
+## O que foi usado?
+- Bcrypt (criptografia de senha)
+- Body-Parser (criar um parse com base na requisição)
+- Consign (carregador das funcionalidades)
+- Express (serviço baseado em JS)
+- Knex
+- Moment (para horários)
+- Jwt
+- Passport (credenciais)
+
 ## Algumas coisas vistas
 - (req, res, next) são importantes. Referentes a (req)uest, (res)olve e next (próximo)
 - Parâmetros vindos da URL vem do (req)uest `req.params.valor` com :
