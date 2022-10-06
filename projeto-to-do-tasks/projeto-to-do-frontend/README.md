@@ -13,3 +13,6 @@ Projeto emulado via Expo.
 - Acesse a pasta `ios`
 - Digite no terminal `pod install`
 - Pode haver falhas no build
+
+## Observações
+- Expo não cria um index na pasta. Para a navegação, foi necessário mexer em node_modules/expo/AppEntry.js e apontar para o arquivo de Navegação. Apenas importei e está tudo funcionando.
