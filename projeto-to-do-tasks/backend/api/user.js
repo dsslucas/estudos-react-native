@@ -17,7 +17,7 @@ module.exports = app => {
 
             // Conecta com o Knex
             app.db('users')
-                .insert({ name: req.body.name, email: req.body.email, password })
+                .insert({ name: req.body.name, email: req.body.email.toLowerCase(), password })
                 .then(() => res.status(204).send())
                 .catch(e => res.status(400).json(e))
         })
