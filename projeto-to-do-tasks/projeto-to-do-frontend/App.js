@@ -10,6 +10,7 @@ export default function App() {
     <>
       <SafeAreaView style={{ backgroundColor: 'red', flex: 1 }}>
         <Text>Oi</Text>
+        <Text>Olá</Text>
       </SafeAreaView>
     </>
   );
