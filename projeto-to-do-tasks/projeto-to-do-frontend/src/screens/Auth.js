@@ -67,8 +67,29 @@ export default class Auth extends Component {
         }
     }
 
-
     render() {
+        // Validações
+        const validations = []
+
+        // E-mail válido
+        validations.push(this.state.email && this.state.email.includes('@'))
+
+        // Senha aciam de seis dígitos
+        validations.push(this.state.password && this.state.password.length >= 6)
+
+        // Se estiver na tela de cadastro
+        if (this.state.stageNew) {
+            // Nome
+            validations.push(this.state.name && this.state.name.trim().length >= 3)
+
+            // Senha aciam de seis dígitos. Confirma a senha confirmada
+            // validations.push(this.state.confirmPassword)
+            validations.push(this.state.password === this.state.confirmPassword)
+        }
+
+        // Formulário válido. Pega todos os elementos do array e faz uma expressão lógica
+        const validForm = validations.reduce((total, atual) => total & atual)
+
         return (
             <ImageBackground source={backgroundImage} style={styles.background}>
                 <Text style={styles.title}>Tasks</Text>
@@ -110,8 +131,13 @@ export default class Auth extends Component {
                         />
                     }
 
-                    <TouchableOpacity onPress={this.signInOrSignUp}>
-                        <SafeAreaView style={styles.button}>
+                    <TouchableOpacity
+                        onPress={this.signInOrSignUp}
+                        disabled={!validForm} //Habilita se o formulário não estiver válido
+                    >
+                        <SafeAreaView
+                            style={[styles.button, validForm ? {} : { backgroundColor: '#aaa' }]}
+                        >
                             <Text style={styles.buttonText}>{this.state.stageNew ? 'Registrar' : "Entrar"}</Text>
                         </SafeAreaView>
                     </TouchableOpacity>
