@@ -55,6 +55,8 @@ export default props => {
     //     )
     // }
 
+    console.warn("Oi")
+
     return (
         // <GestureHandlerRootView>
         // <Swipeable
