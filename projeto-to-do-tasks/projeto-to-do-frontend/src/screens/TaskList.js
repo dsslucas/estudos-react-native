@@ -20,7 +20,8 @@ import 'moment/locale/pt-br'
 // Componentes
 import Task from '../components/Task'
 import AddTask from './AddTask'
-// import AsyncStorage from '@react-native-community/async-storage'
+import { server, showError } from '../common'
+import Axios from 'axios'
 
 export default class TaskList extends Component {
     state = {
@@ -34,75 +35,34 @@ export default class TaskList extends Component {
         showAddTask: false,
 
         // Lista de tarefas
-        tasks: [{
-            id: Math.random(),
-            desc: 'Arrumar o computador',
-            estimateAt: new Date(),
-            doneAt: new Date()
-        }, {
-            id: Math.random(),
-            desc: 'Lavar o carro',
-            estimateAt: new Date(),
-            doneAt: null
-        }, {
-            id: Math.random(),
-            desc: 'Treinar solo no violão',
-            estimateAt: new Date('2022-01-01'),
-            doneAt: new Date()
-        }, {
-            id: Math.random(),
-            desc: 'Treinar o solo de "Doce Mistério" de Leandro & Leonardo',
-            estimateAt: new Date('2018-03-08'),
-            doneAt: null
-        }, {
-            id: Math.random(),
-            desc: 'Revisar conteúdos de React Native',
-            estimateAt: new Date('2018-08-07'),
-            doneAt: null
-        }, {
-            id: Math.random(),
-            desc: 'Lavar a casa',
-            estimateAt: new Date('2015-05-25'),
-            doneAt: new Date()
-        }, {
-            id: Math.random(),
-            desc: 'Fazer almoço',
-            estimateAt: new Date('2022-01-01'),
-            doneAt: new Date()
-        }, {
-            id: Math.random(),
-            desc: 'Consulta médica',
-            estimateAt: new Date('2020-10-15'),
-            doneAt: null
-        }, {
-            id: Math.random(),
-            desc: 'Pagar a viagem para Salvador',
-            estimateAt: new Date('2022-01-25'),
-            doneAt: new Date()
-        }, {
-            id: Math.random(),
-            desc: 'Dormir',
-            estimateAt: new Date('2020-09-20'),
-            doneAt: new Date()
-        }, {
-            id: Math.random(),
-            desc: 'Comprar comida',
-            estimateAt: new Date('2020-05-27'),
-            doneAt: new Date()
-        }]
+        tasks: [{}]
     }
 
-    // Funciona semrpe quando um componente for montado/alterado
+    // Funciona semrpe quando um componente for montado/alterado. Optei por não usar Async Storage por falhas com o Expo
     // Restaura o estado da aplicação baseado aonde foi passado no filterTask
     componentDidMount = () => {
         this.filterTasks()
         // // Pega no Async Storage
         // const stateString = await AsyncStorage.getItem('tasksState')
 
-        // // Verifica o estado
-        // const state = JSON.parse(stateString) || this.state
+        // // // Verifica o estado
+        // const savedState = JSON.parse(stateString) || this.state
 
-        // this.setState(state)
+        // this.setState({
+        //     showDoneTasks: savedState.showDoneTasks
+        // }, this.filterTasks)
+        this.loadTasks()
+    }
+
+    // Trabalha junto do Async Storage. Resolvi não usar por bugs com Expo
+    loadTasks = async () => {
+        try {
+            const maxDate = moment().format('YYYY-MM-DD 23:59:59')
+            const res = await Axios.get(`${server}/tasks?date=${maxDate}`)
+            this.setState({ tasks: res.data }, this.filterTasks)
+        } catch (e) {
+            showError(e)
+        }
     }
 
     // Filtra as tarefas concluídas ou não
@@ -127,54 +87,81 @@ export default class TaskList extends Component {
 
         this.setState({ visibleTasks })
 
-        // Async Storage, transforma um estado em string.
-        // AsyncStorage.setItem('tasksState', JSON.stringify(this.state))
+        // Async Storage, transforma um estado em string. Aqui vai carregar salvo
+        // AsyncStorage.setItem('tasksState', JSON.stringify({
+        //     showDoneTasks: this.state.showDoneTasks
+        // }))
     }
 
     // Pega o ID da Task e modifica (aberta/fechada)
-    toggleTask = taskId => {
-        const tasks = [...this.state.tasks]
+    toggleTask = async taskId => {
+        // const tasks = [...this.state.tasks]
 
-        tasks.forEach(task => {
-            if (task.id === taskId) {
-                // Quando clica, ou vira nulo, ou uma data é definida
-                task.doneAt = task.doneAt ? null : new Date()
-            }
-        })
+        // tasks.forEach(task => {
+        //     if (task.id === taskId) {
+        //         // Quando clica, ou vira nulo, ou uma data é definida
+        //         task.doneAt = task.doneAt ? null : new Date()
+        //     }
+        // })
 
-        // Chama novamente uma callback, Necessário para atualizar a lista de itens filtrados
-        this.setState({ tasks }, this.filterTasks)
+        // // Chama novamente uma callback, Necessário para atualizar a lista de itens filtrados
+        // this.setState({ tasks }, this.filterTasks)
+
+        try{
+            await Axios.put(`${server}/tasks/${taskId}/toggle`)
+            this.loadTasks()
+        } catch(e){
+            showError(e)
+        }
     }
 
     // Adiciona a tarefa salva pelo modal na Task
-    addTask = (newTask) => {
+    addTask = async (newTask) => {
         if (!newTask.desc || !newTask.desc.trim()) {
             Alert.alert("Dados Inválidos", "Descrição não informada!")
             return
         }
 
-        // Clona o estado
-        const tasks = [...this.state.tasks]
+        // // Clona o estado
+        // const tasks = [...this.state.tasks]
 
-        // Adiciona no array
-        tasks.push({
-            id: Math.random(),
-            desc: newTask.desc,
-            estimateAt: newTask.date,
-            doneAt: null
-        })
+        // // Adiciona no array
+        // tasks.push({
+        //     id: Math.random(),
+        //     desc: newTask.desc,
+        //     estimateAt: newTask.date,
+        //     doneAt: null
+        // })
 
-        // Altera o estado e chama por callback
-        this.setState({ tasks, showAddTask: false }, this.filterTasks)
+        // // Altera o estado e chama por callback
+        // this.setState({ tasks, showAddTask: false }, this.filterTasks)
+
+        try {
+            await Axios.post(`${server}/tasks`, {
+                desc: newTask.desc,
+                estimateAt: newTask.date
+            })
+            // Some o modal e depois carrega as taks
+            this.setState({ showAddTask: false }, this.loadTasks)
+        } catch (e) {
+            showError(e)
+        }     
     }
 
     // Exclui uma task
-    deleteTask = id => {
-        // Faz a exclusão usando o Filter
-        const tasks = this.state.tasks.filter(task => task.id !== id)
+    deleteTask = async taskId => {
+        // // Faz a exclusão usando o Filter
+        // const tasks = this.state.tasks.filter(task => task.id !== id)
 
-        // Altera o estado e realiza callback
-        this.setState({ tasks }, this.filterTasks)
+        // // Altera o estado e realiza callback
+        // this.setState({ tasks }, this.filterTasks)
+
+        try{
+            await Axios.delete(`${server}/tasks/${taskId}`)
+            this.loadTasks()
+        } catch(e){
+            showError(e)
+        }
     }
 
     render() {
