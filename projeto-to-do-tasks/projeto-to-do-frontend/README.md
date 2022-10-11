@@ -16,3 +16,4 @@ Projeto emulado via Expo.
 
 ## Observações
 - Expo não cria um index na pasta. Para a navegação, foi necessário mexer em node_modules/expo/AppEntry.js e apontar para o arquivo de Navegação. Apenas importei e está tudo funcionando.
+- Em `common.js` existe a conexão do backend com o frontend, com IPs setados LOCALMENTE. É necessário realizar a alteração de acordo com o IP da máquina.
