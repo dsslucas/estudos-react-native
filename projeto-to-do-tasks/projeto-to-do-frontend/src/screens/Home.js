@@ -1,5 +1,5 @@
 import React from 'react'
-import { ImageBackground, Platform, SafeAreaView, StatusBar, StyleSheet, Text } from 'react-native'
+import { ImageBackground, Platform, SafeAreaView, StatusBar, StyleSheet, Text, TouchableOpacity } from 'react-native'
 
 import commonStyles from '../commonStyles'
 
@@ -23,42 +23,65 @@ export default props => {
                 </SafeAreaView>
 
                 <SafeAreaView style={styles.content}>
-                    <SafeAreaView style={styles.card}>
-                        <ImageBackground
-                            source={Today}
-                            style={styles.cardBackground}
-                            imageStyle={{ borderRadius: 20 }}
-                        >
-                            <Text style={styles.cardTitle}>Today</Text>
-                        </ImageBackground>
-                    </SafeAreaView>
-                    <SafeAreaView style={styles.card}>
-                        <ImageBackground
-                            source={Tomorrow}
-                            style={styles.cardBackground}
-                            imageStyle={{ borderRadius: 20 }}
-                        >
-                            <Text style={styles.cardTitle}>Tomorrow</Text>
-                        </ImageBackground>
-                    </SafeAreaView>
-                    <SafeAreaView style={styles.card}>
-                        <ImageBackground
-                            source={Week}
-                            style={styles.cardBackground}
-                            imageStyle={{ borderRadius: 20 }}
-                        >
-                            <Text style={styles.cardTitle}>Week</Text>
-                        </ImageBackground>
-                    </SafeAreaView>
-                    <SafeAreaView style={styles.card}>
-                        <ImageBackground
-                            source={Month}
-                            style={styles.cardBackground}
-                            imageStyle={{ borderRadius: 20 }}
-                        >
-                            <Text style={styles.cardTitle}>Month</Text>
-                        </ImageBackground>
-                    </SafeAreaView>
+                    <TouchableOpacity
+                        onPress={() => console.warn("Cliquei em Today")}
+                        style={styles.card}
+                    >
+                        <SafeAreaView>
+                            <ImageBackground
+                                source={Today}
+                                style={styles.cardBackground}
+                                imageStyle={{ borderRadius: 20 }}
+                            >
+                                <Text style={styles.cardTitle}>Hoje</Text>
+                            </ImageBackground>
+                        </SafeAreaView>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        onPress={() => console.warn("Cliquei em Amanhã")}
+                        style={styles.card}
+                    >
+                        <SafeAreaView>
+                            <ImageBackground
+                                source={Tomorrow}
+                                style={styles.cardBackground}
+                                imageStyle={{ borderRadius: 20 }}
+                            >
+                                <Text style={styles.cardTitle}>Amanhã</Text>
+                            </ImageBackground>
+                        </SafeAreaView>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        onPress={() => console.warn("Cliquei em Semana")}
+                        style={styles.card}
+                    >
+                        <SafeAreaView>
+                            <ImageBackground
+                                source={Week}
+                                style={styles.cardBackground}
+                                imageStyle={{ borderRadius: 20 }}
+                            >
+                                <Text style={styles.cardTitle}>Semana</Text>
+                            </ImageBackground>
+                        </SafeAreaView>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        onPress={() => console.warn("Cliquei em Mês")}
+                        style={styles.card}
+                    >
+                        <SafeAreaView>
+                            <ImageBackground
+                                source={Month}
+                                style={styles.cardBackground}
+                                imageStyle={{ borderRadius: 20 }}
+                            >
+                                <Text style={styles.cardTitle}>Mês</Text>
+                            </ImageBackground>
+                        </SafeAreaView>
+                    </TouchableOpacity>
                 </SafeAreaView>
             </SafeAreaView>
         </ImageBackground>
@@ -100,14 +123,9 @@ const styles = StyleSheet.create({
         alignContent: 'center'
     },
     card: {
-        width: '40%',
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 20,
         margin: 10,
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '40%'
+        height: '40%',
+        width: '40%',    
     },
     cardBackground: {
         width: '100%',
