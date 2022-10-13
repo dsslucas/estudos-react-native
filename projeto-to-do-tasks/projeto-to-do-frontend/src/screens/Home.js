@@ -1,5 +1,6 @@
 import React from 'react'
 import { ImageBackground, Platform, SafeAreaView, StatusBar, StyleSheet, Text, TouchableOpacity } from 'react-native'
+import { NavigationContainer } from '@react-navigation/native';
 
 import commonStyles from '../commonStyles'
 
@@ -9,10 +10,10 @@ import Today from '../../assets/imgs/today.jpg'
 import Tomorrow from '../../assets/imgs/tomorrow.jpg'
 import Week from '../../assets/imgs/week.jpg'
 import Login from '../../assets/imgs/login.jpg'
-
-// Menu inicial, que abrirá as opções do To-do
+import TaskList from './TaskList';
 
 export default props => {
+    console.warn(props.navigation.navigate != null)
     return (
         <ImageBackground source={Login} style={styles.background}>
             <SafeAreaView style={styles.container}>
@@ -24,8 +25,12 @@ export default props => {
 
                 <SafeAreaView style={styles.content}>
                     <TouchableOpacity
-                        onPress={() => console.warn("Cliquei em Today")}
+                        onPress={() => props.navigation.navigate("TaskList", {
+                            title: "Hoje",
+                            daysAhead: 0
+                        })}
                         style={styles.card}
+
                     >
                         <SafeAreaView>
                             <ImageBackground
@@ -39,7 +44,10 @@ export default props => {
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        onPress={() => console.warn("Cliquei em Amanhã")}
+                        onPress={() => props.navigation.navigate("TaskList", {
+                            title: "Amanhã",
+                            daysAhead: 1
+                        })}
                         style={styles.card}
                     >
                         <SafeAreaView>
@@ -54,7 +62,10 @@ export default props => {
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        onPress={() => console.warn("Cliquei em Semana")}
+                        onPress={() => props.navigation.navigate("TaskList", {
+                            title: "Semana",
+                            daysAhead: 7
+                        })}
                         style={styles.card}
                     >
                         <SafeAreaView>
@@ -69,7 +80,10 @@ export default props => {
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        onPress={() => console.warn("Cliquei em Mês")}
+                        onPress={() => props.navigation.navigate("TaskList", {
+                            title: "Mês",
+                            daysAhead: 30
+                        })}
                         style={styles.card}
                     >
                         <SafeAreaView>
@@ -84,7 +98,7 @@ export default props => {
                     </TouchableOpacity>
                 </SafeAreaView>
             </SafeAreaView>
-        </ImageBackground>
+        </ImageBackground >
     )
 }
 
@@ -125,7 +139,7 @@ const styles = StyleSheet.create({
     card: {
         margin: 10,
         height: '40%',
-        width: '40%',    
+        width: '40%',
     },
     cardBackground: {
         width: '100%',

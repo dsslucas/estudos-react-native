@@ -1,4 +1,4 @@
-# Projeto To-Do App - React Native (Offline)
+# Projeto To-Do App - React Native
 
 Projeto emulado via Expo.
 

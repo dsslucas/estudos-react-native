@@ -1,6 +1,6 @@
 // Lista das tarefas
 import React, { Component } from 'react'
-import { SafeAreaView, Text, ImageBackground, StyleSheet, FlatList, TouchableOpacity, Platform, Alert } from 'react-native'
+import { SafeAreaView, Text, ImageBackground, StyleSheet, FlatList, TouchableOpacity, Platform, Alert, Button } from 'react-native'
 
 // Async Storage
 //import asyncStorage from '@react-native-community/async-storage'
@@ -11,6 +11,9 @@ import commonStyles from '../commonStyles'
 
 // Imagem
 import todayImage from '../../assets/imgs/today.jpg'
+import tomorrowImage from '../../assets/imgs/tomorrow.jpg'
+import weekImage from '../../assets/imgs/week.jpg'
+import monthImage from '../../assets/imgs/month.jpg'
 
 // Data
 import moment from 'moment'
@@ -37,7 +40,6 @@ export default class TaskList extends Component {
         // Lista de tarefas
         tasks: [{}]
     }
-
     // Funciona semrpe quando um componente for montado/alterado. Optei por não usar Async Storage por falhas com o Expo
     // Restaura o estado da aplicação baseado aonde foi passado no filterTask
     componentDidMount = () => {
@@ -57,7 +59,9 @@ export default class TaskList extends Component {
     // Trabalha junto do Async Storage. Resolvi não usar por bugs com Expo
     loadTasks = async () => {
         try {
-            const maxDate = moment().format('YYYY-MM-DD 23:59:59')
+            const maxDate = moment()
+                .add({ days: this.props.daysAhead })
+                .format('YYYY-MM-DD 23:59:59')
             const res = await Axios.get(`${server}/tasks?date=${maxDate}`)
             this.setState({ tasks: res.data }, this.filterTasks)
         } catch (e) {
@@ -107,10 +111,10 @@ export default class TaskList extends Component {
         // // Chama novamente uma callback, Necessário para atualizar a lista de itens filtrados
         // this.setState({ tasks }, this.filterTasks)
 
-        try{
+        try {
             await Axios.put(`${server}/tasks/${taskId}/toggle`)
             this.loadTasks()
-        } catch(e){
+        } catch (e) {
             showError(e)
         }
     }
@@ -145,7 +149,7 @@ export default class TaskList extends Component {
             this.setState({ showAddTask: false }, this.loadTasks)
         } catch (e) {
             showError(e)
-        }     
+        }
     }
 
     // Exclui uma task
@@ -156,13 +160,34 @@ export default class TaskList extends Component {
         // // Altera o estado e realiza callback
         // this.setState({ tasks }, this.filterTasks)
 
-        try{
+        try {
             await Axios.delete(`${server}/tasks/${taskId}`)
             this.loadTasks()
-        } catch(e){
+        } catch (e) {
             showError(e)
         }
     }
+
+    // Renderiza a imagem de acordo com o dia
+    getImage = () => {
+        switch (this.props.route.params.daysAhead) {
+            case 0: return todayImage
+            case 1: return tomorrowImage
+            case 7: return weekImage
+            default: return monthImage
+        }
+    }
+
+    // Muda a cor do botão de acordo com o dia
+    getColor = () => {
+        switch (this.props.route.params.daysAhead) {
+            case 0: return commonStyles.colors.today
+            case 1: return commonStyles.colors.tomorrow
+            case 7: return commonStyles.colors.week
+            default: return commonStyles.colors.month
+        }
+    }
+
 
     render() {
         // O que vem do Moment para a data
@@ -175,8 +200,12 @@ export default class TaskList extends Component {
                     onSave={this.addTask}
                 />
 
-                <ImageBackground source={todayImage} style={styles.background}>
+                <ImageBackground source={this.getImage()} style={styles.background}>
                     <SafeAreaView style={styles.iconBar}>
+                        <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
+                            <Icon name='arrow-left'
+                                size={20} color={commonStyles.colors.secondary} />
+                        </TouchableOpacity>
                         <TouchableOpacity onPress={this.toggleFilter}>
                             <Icon
                                 name={this.state.showDoneTasks ? 'eye' : 'eye-slash'}
@@ -186,7 +215,7 @@ export default class TaskList extends Component {
                     </SafeAreaView>
 
                     <SafeAreaView style={styles.titleBar}>
-                        <Text style={styles.title}>Hoje</Text>
+                        <Text style={styles.title}>{this.props.route.params.title}</Text>
                         <Text style={styles.subtitle}>{today}</Text>
                     </SafeAreaView>
                 </ImageBackground>
@@ -200,7 +229,7 @@ export default class TaskList extends Component {
                 </SafeAreaView>
 
                 <TouchableOpacity
-                    style={styles.addButton}
+                    style={[styles.addButton, { backgroundColor: this.getColor() }]}
                     onPress={() => this.setState({ showAddTask: true })}
                     activeOpacity={0.7}
                 >
@@ -247,7 +276,8 @@ const styles = StyleSheet.create({
     iconBar: {
         flexDirection: 'row',
         marginHorizontal: 20,
-        justifyContent: 'flex-end',
+        // justifyContent: 'flex-end',
+        justifyContent: 'space-between',
         marginTop: 40
     },
 
@@ -259,7 +289,7 @@ const styles = StyleSheet.create({
         width: 50,
         height: 50,
         borderRadius: 25,
-        backgroundColor: commonStyles.colors.today,
+        // backgroundColor: commonStyles.colors.today,
         alignItems: 'center',
         justifyContent: 'center'
     }
