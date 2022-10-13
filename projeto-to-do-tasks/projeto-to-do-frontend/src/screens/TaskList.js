@@ -1,6 +1,6 @@
 // Lista das tarefas
 import React, { Component } from 'react'
-import { SafeAreaView, Text, ImageBackground, StyleSheet, FlatList, TouchableOpacity, Platform, Alert, Button } from 'react-native'
+import { SafeAreaView, Text, ImageBackground, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native'
 
 // Async Storage
 //import asyncStorage from '@react-native-community/async-storage'
@@ -56,11 +56,11 @@ export default class TaskList extends Component {
         this.loadTasks()
     }
 
-    // Trabalha junto do Async Storage. Resolvi não usar por bugs com Expo
+    // Trabalha junto do Async Storage. Resolvi não usar por bugs com Expo. Mas aqui carrega as tasks
     loadTasks = async () => {
         try {
             const maxDate = moment()
-                .add({ days: this.props.daysAhead })
+                .add({ days: this.props.route.params.daysAhead })
                 .format('YYYY-MM-DD 23:59:59')
             const res = await Axios.get(`${server}/tasks?date=${maxDate}`)
             this.setState({ tasks: res.data }, this.filterTasks)
@@ -98,7 +98,7 @@ export default class TaskList extends Component {
     }
 
     // Pega o ID da Task e modifica (aberta/fechada)
-    toggleTask = async taskId => {
+    toggleTask = async (taskId) => {
         // const tasks = [...this.state.tasks]
 
         // tasks.forEach(task => {
@@ -113,7 +113,7 @@ export default class TaskList extends Component {
 
         try {
             await Axios.put(`${server}/tasks/${taskId}/toggle`)
-            this.loadTasks()
+            await this.loadTasks()
         } catch (e) {
             showError(e)
         }
@@ -145,7 +145,7 @@ export default class TaskList extends Component {
                 desc: newTask.desc,
                 estimateAt: newTask.date
             })
-            // Some o modal e depois carrega as taks
+            // Some o modal e depois carrega as tasks
             this.setState({ showAddTask: false }, this.loadTasks)
         } catch (e) {
             showError(e)
@@ -153,7 +153,7 @@ export default class TaskList extends Component {
     }
 
     // Exclui uma task
-    deleteTask = async taskId => {
+    deleteTask = async (taskId) => {
         // // Faz a exclusão usando o Filter
         // const tasks = this.state.tasks.filter(task => task.id !== id)
 
@@ -162,7 +162,7 @@ export default class TaskList extends Component {
 
         try {
             await Axios.delete(`${server}/tasks/${taskId}`)
-            this.loadTasks()
+            await this.loadTasks()
         } catch (e) {
             showError(e)
         }
@@ -188,10 +188,40 @@ export default class TaskList extends Component {
         }
     }
 
+    getDays = () => {
+        const initialDate = moment().locale('pt-br')
+
+        // Dia atual
+        const today = moment().locale('pt-br').format('dddd, D [de] MMMM [de] YYYY.')
+
+        // Próximo dia
+        const tomorrow = moment().locale('pt-br').add({days: this.props.route.params.daysAhead}).format('dddd, D [de] MMMM [de] YYYY.')
+
+        // Manipulação para dias da semana
+        const firstDayWeek = moment().startOf('week').format('D')
+        const endDayWeek = moment().endOf('week').format('D')
+
+        // Mês
+        const firstDayOfMonth = moment().startOf("month").format('D')
+        const lastDayOfMonth = moment().endOf("month").format('D')
+        const endMonth = initialDate.endOf('month').format('MMMM')
+
+        // Ano (apenas o número)
+        const endYear = initialDate.endOf('year').format('YYYY')
+
+        switch(this.props.route.params.daysAhead){
+            case 0: return today
+            case 1: return tomorrow
+            case 7: return `De ${firstDayWeek} a ${endDayWeek} de ${endMonth} de ${endYear}.`
+            default: return `De ${firstDayOfMonth} a ${lastDayOfMonth} de ${endMonth} de ${endYear}.`
+        }
+    }
 
     render() {
-        // O que vem do Moment para a data
-        const today = moment().locale('pt-br').format('dddd, D [de] MMMM [de] YYYY')
+        // O que vem do Moment para a data. Funciona para o dia seguinte também.
+        const today = moment().locale('pt-br').add({days: this.props.route.params.daysAhead}).format('dddd, D [de] MMMM [de] YYYY')
+        const week = moment().week()
+        console.log(week)
         return (
             <SafeAreaView style={styles.container}>
                 <AddTask
@@ -216,7 +246,7 @@ export default class TaskList extends Component {
 
                     <SafeAreaView style={styles.titleBar}>
                         <Text style={styles.title}>{this.props.route.params.title}</Text>
-                        <Text style={styles.subtitle}>{today}</Text>
+                        <Text style={styles.subtitle}>{this.getDays()}</Text>
                     </SafeAreaView>
                 </ImageBackground>
 

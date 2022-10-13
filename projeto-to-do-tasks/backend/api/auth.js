@@ -23,7 +23,7 @@ module.exports = app => {
         if (user) {
             // Compara as senhas "crua" com a criptografada
             bcrypt.compare(req.body.password, user.password, (err, isMatch) => {
-                if (err | !isMatch) res.status(401).send()
+                if (err | !isMatch) res.status(401).send("A senha informada é inválida!")
 
                 const payload = { id: user.id }
 
@@ -38,7 +38,7 @@ module.exports = app => {
 
         // Caso não esteja válido
         else {
-            res.status(400).send("Email não encontrado!")
+            res.status(400).send("Usuário não encontrado!")
         }
     }
 

@@ -1,7 +1,5 @@
 import React from 'react'
 import { ImageBackground, Platform, SafeAreaView, StatusBar, StyleSheet, Text, TouchableOpacity } from 'react-native'
-import { NavigationContainer } from '@react-navigation/native';
-
 import commonStyles from '../commonStyles'
 
 // Imagens
@@ -10,10 +8,8 @@ import Today from '../../assets/imgs/today.jpg'
 import Tomorrow from '../../assets/imgs/tomorrow.jpg'
 import Week from '../../assets/imgs/week.jpg'
 import Login from '../../assets/imgs/login.jpg'
-import TaskList from './TaskList';
 
 export default props => {
-    console.warn(props.navigation.navigate != null)
     return (
         <ImageBackground source={Login} style={styles.background}>
             <SafeAreaView style={styles.container}>
