@@ -20,6 +20,16 @@ Projeto para cadastro de usuários e tasks utilizando serviços backend.
 - Consign associa as informações dentro do Index. Espera que a chamada seja apenas uma função
 - ExtractJwt: extrai da requisição as autorizações e tokens
 
-## Comandos
-- `cmd.exe /c chcp 1252` para entrar no Postgres
-- `\c {NOME DO BANCO}` conecta no banco
+## Como executar?
+- É necessário ter as dependências instaladas `npm i`
+- Necessário ter o Postgres instalado
+
+### Para o Backend
+- Acessar o terminal na pasta backend e digitar `npm start`, apenas.
+
+### Para o Postgres
+- Digitar o comando `cmd.exe /c chcp 1252`
+- Criar um banco de dados (fiz com nome **tasks**): `createdb -U tasks`
+- Criar um usuário (utilizei como nome **postgres**): `CREATE USER postgres`
+- Logar: `psql -U postgres`
+- Após, conectar ao banco de dados (ou database): `\c {NOME DO BANCO}`

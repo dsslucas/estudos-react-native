@@ -188,6 +188,7 @@ export default class TaskList extends Component {
         }
     }
 
+    // Manda as datas para as tasks.
     getDays = () => {
         const initialDate = moment().locale('pt-br')
 
@@ -218,10 +219,6 @@ export default class TaskList extends Component {
     }
 
     render() {
-        // O que vem do Moment para a data. Funciona para o dia seguinte também.
-        const today = moment().locale('pt-br').add({days: this.props.route.params.daysAhead}).format('dddd, D [de] MMMM [de] YYYY')
-        const week = moment().week()
-        console.log(week)
         return (
             <SafeAreaView style={styles.container}>
                 <AddTask
