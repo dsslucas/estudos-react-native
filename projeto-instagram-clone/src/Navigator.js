@@ -4,6 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import { NavigationContainer } from '@react-navigation/native'
 import Feed from './screens/Feed'
+import AddPhoto from "./screens/AddPhoto";
 
 const Tabs = createBottomTabNavigator();
 
@@ -27,7 +28,7 @@ function MyTabs() {
                 })}
             >
                 <Tabs.Screen name="Feed" component={Feed} />
-                <Tabs.Screen name="Camera" component={Feed} />
+                <Tabs.Screen name="Camera" component={AddPhoto} />
                 <Tabs.Screen name="Profile" component={Feed} />
             </Tabs.Navigator>
         </NavigationContainer>
