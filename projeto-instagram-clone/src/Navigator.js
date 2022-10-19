@@ -16,7 +16,7 @@ const AppNavigator = () => {
         <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={Profile}>
             <Stack.Screen name="Profile" component={Profile} />
             <Stack.Screen name="Login" component={Login} />
-            <Stack.Screen name="RegisterUser" component={Register} />            
+            <Stack.Screen name="Register" component={Register} />            
         </Stack.Navigator>
     );
 };
@@ -37,13 +37,12 @@ const menuConfig = {
 const MenuRoutes = props => {
 
     return (
-        <Tab.Navigator initialRouteName="Feed" tabBarOptions={menuConfig}   >
+        <Tab.Navigator initialRouteName="Feed" screenOptions={menuConfig}   >
             <Tab.Screen
                 name="Feed"
                 component={Feed}
 
                 options={{
-                    tabBarLabel: 'Feed',
                     tabBarIcon: () => (
                         <Icon name="home" size={30} />
                     ),
