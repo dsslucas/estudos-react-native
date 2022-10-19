@@ -1,41 +1,117 @@
 import React from "react";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-
+import { createSwitchNavigator } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import { NavigationContainer } from '@react-navigation/native'
+import { createStackNavigator } from '@react-navigation/stack'
 import Feed from './screens/Feed'
 import AddPhoto from "./screens/AddPhoto";
+import Profile from './screens/Profile'
+import Login from "./screens/Login";
+import Register from "./screens/Register";
+//const Tabs = createBottomTabNavigator();
 
-const Tabs = createBottomTabNavigator();
-
-function MyTabs() {
+const AppNavigator = () => {
     return (
-        <NavigationContainer>
-            <Tabs.Navigator
-                screenOptions={({ route }) => ({
-                    tabBarIcon: ({ color }) => {
-                        let iconName;
-                        if (route.name === 'Feed') iconName = "home"
-                        else if (route.name === 'Camera') iconName = "camera"
-                        else if (route.name === 'Profile') iconName = "user"
+        <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={Profile}>
+            <Stack.Screen name="Profile" component={Profile} />
+            <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="RegisterUser" component={Register} />            
+        </Stack.Navigator>
+    );
+};
 
-                        return <Icon name={iconName} size={30} color={color} />
-                    },
-                    tabBarActiveTintColor: 'blue',
-                    tabBarInactiveTintColor: 'gray',
-                    tabBarShowLabel: false,
-                    headerShown: false                    
-                })}
-            >
-                <Tabs.Screen name="Feed" component={Feed} />
-                <Tabs.Screen name="Camera" component={AddPhoto} />
-                <Tabs.Screen name="Profile" component={Feed} />
-            </Tabs.Navigator>
-        </NavigationContainer>
-    )
+const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator()
+const menuConfig = {
+    labelStyle: {
+        // fontFamily: commonStyles.fontFamily,
+
+        fontWeight: 'normal',
+        fontSize: 15
+    },
+    activeTintColor: '#080',
+    showLabel: true,
 }
 
-export default MyTabs
+const MenuRoutes = props => {
+
+    return (
+        <Tab.Navigator initialRouteName="Feed" tabBarOptions={menuConfig}   >
+            <Tab.Screen
+                name="Feed"
+                component={Feed}
+
+                options={{
+                    tabBarLabel: 'Feed',
+                    tabBarIcon: () => (
+                        <Icon name="home" size={30} />
+                    ),
+                }}
+            />
+            <Tab.Screen
+                name="AddPicture"
+                component={AddPhoto}
+
+                options={{
+                    tabBarLabel: 'Add Picture',
+                    tabBarIcon: () => (
+                        <Icon name="camera" size={30} />
+                    ),
+                }}
+            />
+            <Tab.Screen
+                name="Profile"
+                component={AppNavigator}
+                options={
+                    {
+                        tabBarLabel: 'Profile',
+                        tabBarIcon: () => (
+                            <Icon name="user" size={30} />
+                        ),
+                    }}>
+            </Tab.Screen>
+        </Tab.Navigator>
+    );
+};
+const Navigator = () => {
+    return (
+        <NavigationContainer >
+            <MenuRoutes />
+        </NavigationContainer>
+    );
+};
+export default Navigator
+
+
+// function MyTabs() {
+//     return (
+//         <NavigationContainer>
+//             <Tabs.Navigator
+//                 screenOptions={({ route }) => ({
+//                     tabBarIcon: ({ color }) => {
+//                         let iconName;
+//                         if (route.name === 'Feed') iconName = "home"
+//                         else if (route.name === 'Camera') iconName = "camera"
+//                         else if (route.name === 'Profile') iconName = "user"
+
+//                         return <Icon name={iconName} size={30} color={color} />
+//                     },
+//                     tabBarActiveTintColor: 'blue',
+//                     tabBarInactiveTintColor: 'gray',
+//                     tabBarShowLabel: false,
+//                     headerShown: false
+//                 })}
+//             >
+//                 <Tabs.Screen name="Feed" component={Feed} />
+//                 <Tabs.Screen name="Camera" component={AddPhoto} />
+//                 <Tabs.Screen name="Profile" component={Profile} />
+//             </Tabs.Navigator>
+//         </NavigationContainer>
+//     )
+// }
+
+// export default MyTabs
 
 // // Rotas
 // const MenuRoutes = {

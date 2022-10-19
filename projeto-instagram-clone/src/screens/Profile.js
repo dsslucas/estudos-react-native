@@ -1,14 +1,64 @@
 import React, { Component } from 'react'
-import {Gravatar} from 'react-native-gravatar'
+import { SafeAreaView, StyleSheet, Text, TouchableOpacity } from 'react-native'
+import { Gravatar } from 'react-native-gravatar'
 
 class Profile extends Component {
     logout = () => {
-
+        this.props.navigation.navigate("Login")
     }
-    render(){
+
+    render() {
         const options = {
             email: 'gil.esfihas@gmail.com',
             secure: true
         }
+
+        return (
+            <SafeAreaView style={styles.container}>
+                <Gravatar options={options} style={styles.avatar} />
+                <Text style={styles.nickname}>blablabala</Text>
+                <Text style={styles.email}>{options.email}</Text>
+
+                <TouchableOpacity
+                    onPress={this.logout}
+                    style={styles.buttom}
+                >
+                    <Text style={styles.buttomText}>Sair</Text>
+                </TouchableOpacity>
+            </SafeAreaView>
+        )
     }
 }
+
+export default Profile
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        alignItems: 'center'
+    },
+    avatar: {
+        width: 150,
+        height: 150,
+        borderRadius: 75,
+        marginTop: 100
+    },
+    nickname: {
+        marginTop: 30,
+        fontSize: 30,
+        fontWeight: 'bold'
+    },
+    email: {
+        marginTop: 20,
+        fontSize: 25
+    },
+    buttom: {
+        marginTop: 30,
+        padding: 10,
+        backgroundColor: '#4286f4'
+    },
+    buttomText: {
+        fontSize: 20,
+        color: '#FFF'
+    }
+})
