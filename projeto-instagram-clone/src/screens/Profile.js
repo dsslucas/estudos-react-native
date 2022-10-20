@@ -19,7 +19,7 @@ class Profile extends Component {
         return (
             <SafeAreaView style={styles.container}>
                 <Gravatar options={options} style={styles.avatar} />
-                <Text style={styles.nickname}>{this.props.email}</Text>
+                <Text style={styles.nickname}>{this.props.name}</Text>
                 <Text style={styles.email}>{this.props.email}</Text>
 
                 <TouchableOpacity

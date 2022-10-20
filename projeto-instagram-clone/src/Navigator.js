@@ -13,7 +13,7 @@ import Register from "./screens/Register";
 
 const AppNavigator = () => {
     return (
-        <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={Profile}>
+        <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={Login}>
             <Stack.Screen name="Profile" component={Profile} />
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="Register" component={Register} />            
@@ -32,6 +32,7 @@ const menuConfig = {
     },
     activeTintColor: '#080',
     showLabel: true,
+    headerShown: false
 }
 
 const MenuRoutes = props => {
