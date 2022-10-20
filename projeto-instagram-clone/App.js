@@ -1,28 +1,18 @@
 import React, { Component } from 'react'
+import { Provider } from 'react-redux'
 import Navigator from './src/Navigator'
+import storeConfig from './src/store/storeConfig'
+import registerRootComponent from 'expo/build/launch/registerRootComponent';
 
-export default class App extends Component {
-  render() {
-    const comments = [{
-      nickname: 'joanabprudente',
-      comment: 'Excelente foto!'
-    }, {
-      nickname: 'rafag1comp',
-      comment: "Feio pra chuchu!"
-    }, {
-      nickname: "jpvalento",
-      comment: '113 é o que liga'
-    }]
+// Chama o Redux
+const store = storeConfig()
 
-    return (
-      // <SafeAreaView style={{ flex: 1 }}>
-      //   <Header />
-      //   <Post
-      //     image={require('./assets/imgs/fence.jpg')}
-      //     comments={comments}
-      //   />
-      // </SafeAreaView>
+const Redux = () => {
+  return (
+    <Provider store={store}>
       <Navigator />
-    );
-  }
+    </Provider>
+  )
 }
+
+registerRootComponent(Redux);

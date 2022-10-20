@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-// import { connect } from 'react-redux'
-// import { login } from '../store/actions/user'
+import { connect } from 'react-redux'
+import { login } from '../store/actions/user'
 import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native'
 
 class Login extends Component {
@@ -17,7 +17,9 @@ class Login extends Component {
     }
 
     login = () => {
+        // Passa para o estado local e para o Redux
         this.props.onLogin({ ...this.state })
+        this.props.navigation.navigate('Profile')
     }
 
     render() {
@@ -76,17 +78,20 @@ const styles = StyleSheet.create({
     }
 })
 
+// Cria uma função que mapeia dados e valores no estado global da aplicação para o componente.
 // const mapStateToProps = ({ user }) => {
 //     return {
 //         isLoading: user.isLoading
 //     }
 // }
 
-// const mapDispatchToProps = dispatch => {
-//     return {
-//         onLogin: user => dispatch(login(user))
-//     }
-// }
+const mapDispatchToProps = dispatch => {
+    return {
+        // Pega a Action criada e manda para todos os reducers
+        onLogin: user => dispatch(login(user))
+    }
+}
 
-export default Login
+// export default Login
+export default connect(null, mapDispatchToProps)(Login)
 // export default connect(mapStateToProps, mapDispatchToProps)(Login)

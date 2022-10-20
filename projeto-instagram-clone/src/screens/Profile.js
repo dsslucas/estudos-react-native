@@ -1,23 +1,26 @@
 import React, { Component } from 'react'
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity } from 'react-native'
 import { Gravatar } from 'react-native-gravatar'
+import { connect } from 'react-redux'
+import { logout } from '../store/actions/user'
 
 class Profile extends Component {
     logout = () => {
+        this.props.onLogout()
         this.props.navigation.navigate("Login")
     }
 
     render() {
         const options = {
-            email: 'gil.esfihas@gmail.com',
+            email: this.props.email,
             secure: true
         }
 
         return (
             <SafeAreaView style={styles.container}>
                 <Gravatar options={options} style={styles.avatar} />
-                <Text style={styles.nickname}>blablabala</Text>
-                <Text style={styles.email}>{options.email}</Text>
+                <Text style={styles.nickname}>{this.props.email}</Text>
+                <Text style={styles.email}>{this.props.email}</Text>
 
                 <TouchableOpacity
                     onPress={this.logout}
@@ -29,8 +32,6 @@ class Profile extends Component {
         )
     }
 }
-
-export default Profile
 
 const styles = StyleSheet.create({
     container: {
@@ -62,3 +63,21 @@ const styles = StyleSheet.create({
         color: '#FFF'
     }
 })
+
+// Mapeia o estado global para o componente
+const mapStateToProps = ({ user }) => {
+    return {
+        email: user.email,
+        name: user.name,
+    }
+}
+
+// Mapeia uma Action Creator
+const mapDispatchToProps = dispatch => {
+    return {
+        onLogout: () => dispatch(logout())
+    }
+}
+
+// export default Profile
+export default connect(mapStateToProps, mapDispatchToProps)(Profile)
