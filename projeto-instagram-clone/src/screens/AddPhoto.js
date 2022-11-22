@@ -8,6 +8,8 @@ import { addPost } from '../store/actions/posts'
 
 import Header from '../components/Header'
 
+const noUser = "Você precisa estar logado para adicionar imagens."
+
 class AddPhoto extends Component {
     state = {
         image: null,
@@ -31,6 +33,12 @@ class AddPhoto extends Component {
     }
 
     pickCameraImage = async () => {
+        // Caso o usuário não esteja setado
+        if(!this.props.name){
+            Alert.alert("Falha", noUser)
+            return 
+        }
+
         let res = await ImagePicker.launchCameraAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.All,
             allowsEditing: true,
@@ -47,6 +55,12 @@ class AddPhoto extends Component {
 
     // Imagem gerada
     save = async () => {
+        // Caso o usuário não esteja setado
+        if(!this.props.name){
+            Alert.alert("Falha", noUser)
+            return 
+        }
+
         // Alert.alert('Imagem adicionada!', this.state.comment)
         console.warn("Entrei aqui")
         // Dispara o evento. Fica responsável por chamar o Action Creator, depois Reducers e alterar Store
@@ -87,6 +101,7 @@ class AddPhoto extends Component {
                         <TextInput
                             placeholder='commentario da foto?...'
                             style={styles.input} value={this.state.comment}
+                            editable={this.props.name !== null}
                             onChangeText={comment => this.setState({ comment })}>
                         </TextInput>
 
