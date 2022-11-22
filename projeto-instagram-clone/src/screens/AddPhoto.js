@@ -3,6 +3,8 @@ import * as ImagePicker from 'expo-image-picker';
 import { View, Text, StyleSheet, TouchableOpacity, TouchableHighlight, TextInput, Image, Dimensions, Platform, ScrollView, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { connect } from 'react-redux';
+import { addPost } from '../store/actions/posts'
 
 import Header from '../components/Header'
 
@@ -19,9 +21,9 @@ class AddPhoto extends Component {
             aspect: [4, 3],
             quality: 1
         });
-        
+
         console.log(res);
- 
+
         if (!res.cancelled) {
             this.setState({ image: res.uri });
         }
@@ -35,9 +37,9 @@ class AddPhoto extends Component {
             aspect: [4, 3],
             quality: 1
         });
- 
+
         console.log(res);
- 
+
         if (!res.cancelled) {
             this.setState({ image: res.uri, base64: res.data });
         }
@@ -45,7 +47,25 @@ class AddPhoto extends Component {
 
     // Imagem gerada
     save = async () => {
-        Alert.alert('Imagem adicionada!', this.state.comment)
+        // Alert.alert('Imagem adicionada!', this.state.comment)
+        console.warn("Entrei aqui")
+        // Dispara o evento. Fica responsável por chamar o Action Creator, depois Reducers e alterar Store
+        this.props.onAddPost({
+            id: Math.random(),
+            nickname: this.props.name,
+            email: this.props.email,
+            image: this.state.image,
+            comments: [{
+                nickname: this.props.name,
+                comment: this.state.comment
+            }]
+        })
+
+        console.log(this.state.image)
+
+        this.setState({ image: null, comment: '' })
+
+        this.props.navigation.navigate("Feed")
     }
 
     render() {
@@ -64,7 +84,7 @@ class AddPhoto extends Component {
                             <Image source={{ uri: this.state.image }} style={styles.image} />
                         </View>
 
-                        <TextInput 
+                        <TextInput
                             placeholder='commentario da foto?...'
                             style={styles.input} value={this.state.comment}
                             onChangeText={comment => this.setState({ comment })}>
@@ -161,4 +181,20 @@ const styles = StyleSheet.create({
     }
 })
 
-export default AddPhoto
+// Estado Global p/ componente
+const mapStateToProps = ({ user, posts }) => {
+    return {
+        email: user.email,
+        name: user.name,
+        loading: posts.isUploading
+    }
+}
+
+// Mapeia as actions
+const mapDispatchToProps = dispatch => {
+    return {
+        onAddPost: post => dispatch(addPost(post))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddPhoto)
