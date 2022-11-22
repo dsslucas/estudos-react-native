@@ -1,7 +1,8 @@
 // Configuração do Redux
-import { createStore, combineReducers } from 'redux'
+import { createStore, combineReducers, compose, applyMiddleware } from 'redux'
 import userReducer from './reducers/user'
 import postsReducer from './reducers/posts'
+import thunk from 'redux-thunk'
 
 // Junta todos os reducers
 const reducers = combineReducers({
@@ -10,7 +11,7 @@ const reducers = combineReducers({
 })
 
 const storeConfig = () => {
-    return createStore(reducers)
+    return createStore(reducers, compose(applyMiddleware(thunk)))
 }
 
 export default storeConfig
